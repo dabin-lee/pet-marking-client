@@ -1,15 +1,21 @@
-import logo from './logo.svg';
+
 import './App.scss';
-import { useEffect } from 'react';
-import axios from 'axios';
 import Main from './page/main'
-function App() {
+import Signin from './page/signin';
+import Signup from './page/signup';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+const App = () => {
 
   return (
-    <div className="App">
-      <Main />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Signin />}></Route>
+        <Route path="/signup" element={<Signup />}></Route>
+        <Route index path="/main" element={<Main />}></Route>
+      </Routes>
+    </BrowserRouter>
 
-    </div>
   );
 }
 

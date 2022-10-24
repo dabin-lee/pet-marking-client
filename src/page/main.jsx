@@ -1,6 +1,6 @@
 /* global kakao*/
 import React, { useRef, useEffect, useState, useMemo } from 'react'
-import Loginform from './loginform'
+import Loginform from '../component/loginform'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
@@ -13,10 +13,11 @@ function Main() {
         setSearch(e.target.value)
     }
     const mapElement = useRef(null)
-
+    const searchInput = useRef(null)
 
     useEffect(() => {
-        console.log('map: ', map);
+        // console.log('map: ', map);
+        searchInput.current.focus()
         if (!map) {
             const options = { //지도를 생성할 때 필요한 기본 옵션
                 center: new window.kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
@@ -27,10 +28,6 @@ function Main() {
             setMap(newMap)
         }
     }, [])
-
-    useEffect(() => {
-        console.log('map: ', map);
-    }, [map])
 
 
 
@@ -46,7 +43,6 @@ function Main() {
         //         "Authorization": `KakaoAK 0f3f8d9f93cc9d6560cd7921c46f92cd`
         //     }
         // }).then(res => console.log('res: ', res))
-
     }
 
     const placesSearchCB = (data, status, pagination) => {
@@ -92,13 +88,14 @@ function Main() {
                         <div className="logo">
                             <img src={process.env.PUBLIC_URL + `/marking_dog.png`} alt="" />
                         </div>
-                        <div className="searchBox">
+                        <div className="searchBox ">
                             <div className="submitBox">
                                 <label htmlFor="searchBox"><span>search</span></label>
                                 <input type="text" id="searchBox"
                                     placeholder="망고가 좋아했던 장소"
                                     value={search}
                                     onChange={chgSearch}
+                                    ref={searchInput}
                                 />
                             </div>
                             <div className="searchBtn">
