@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -97,10 +99,23 @@ const SignupPage = styled.div`
 
 export default function Signup() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const history = useNavigate()
+
+    const { register, handleSubmit, setError, formState: { errors } } = useForm({ mode: 'onBlur' })
+    const pw = useRef()
     const onValue = (data) => {
-        console.log(data)
+        axios.post('http://localhost:3000/register', {
+            email: data.email,
+            pw: data.pw,
+            pwComfirm: data.pwComfirm,
+            name: data.name
+        }).then((res) => {
+            alert('회원가입이 완료되었습니다.')
+            localStorage.setItem('token', res.data.jwt)
+            history('/')
+        })
     }
+
     return (
         <SignupPage>
             <div className="wrapper">
@@ -129,16 +144,29 @@ export default function Signup() {
                             })}
                         />
                         {errors.pw?.type === "required" && <p>비밀번호를 입력해 주세요.</p>}
+                        {errors.pw?.type === "minLength" && <p>8글자 이상 입력해주세요.</p>}
 
                         <input type="password"
                             placeholder="비밀번호"
-                            {...register("pw", {
+                            {...register("pwComfirm", {
                                 required: true,
-                                minLength: 8
+                                minLength: 8,
+                                validate: (value) => {
+                                    if (value !== pw) {
+                                        // setError(
+                                        //     "pwComfirm",
+                                        //     { message: { message } },
+                                        // )
+                                    }
+                                }
                             })}
                         />
-                        {errors.pw?.type === "required" && <p>비밀번호를 입력해 주세요.</p>}
-
+                        {errors.pw?.type === "minLength" && <p>8글자 이상 입력해주세요.</p>}
+                        {/* <ErrorMessage
+                            errors={errors}
+                            name="pwComfirm"
+                            render={({ message }) => <p>성별을 선택하세요</p>}
+                        /> */}
                         <input type="text"
                             className="name"
                             placeholder="이름"

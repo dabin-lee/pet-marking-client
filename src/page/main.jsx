@@ -1,12 +1,15 @@
 /* global kakao*/
 import React, { useRef, useEffect, useState, useMemo } from 'react'
-import Loginform from '../component/loginform'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+import Header from '../component/header'
+import Bookmark from '../component/Bookmark'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+
 
 function Main() {
 
+    const [bookmark, setBookmark] = useState([])
     const [search, setSearch] = useState('')
     const [map, setMap] = useState(null)
     const chgSearch = (e) => {
@@ -28,8 +31,6 @@ function Main() {
             setMap(newMap)
         }
     }, [])
-
-
 
     const searchPlace = () => {
         // 장소 검색 객체를 생성합니다
@@ -79,60 +80,37 @@ function Main() {
         });
     }
 
-
+    useEffect(() => {
+        axios.get('/bookmark/data.json')
+            .then((res) => setBookmark(res.data.bookmark))
+    }, [])
     return (
         <main>
-            <header>
-                <div className="inner">
-                    <div className="nav">
-                        <div className="logo">
-                            <img src={process.env.PUBLIC_URL + `/marking_dog.png`} alt="" />
-                        </div>
-                        <div className="searchBox ">
-                            <div className="submitBox">
-                                <label htmlFor="searchBox"><span>search</span></label>
-                                <input type="text" id="searchBox"
-                                    placeholder="망고가 좋아했던 장소"
-                                    value={search}
-                                    onChange={chgSearch}
-                                    ref={searchInput}
-                                />
-                            </div>
-                            <div className="searchBtn">
-                                <button onClick={searchPlace}>
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <Loginform />
-                        </div>
-
-
-                    </div>
-                </div>
-            </header>
+            <Header
+                search={search}
+                chgSearch={chgSearch}
+                searchInput={searchInput}
+                searchPlace={searchPlace}
+            />
 
             <section className="container">
-                <div className="map__area">
-                    <div ref={mapElement} style={{ minHeight: '400px' }}></div>
-                </div>
+                <div className="cont__inner">
 
-                <div className="bookMark__area">
-                    <ul>
-                        <li>
-                            <div className="imgbox"></div>
-                            <div className="cont">
-                                <h3>tit</h3>
-                                <div className="info">
-                                    <p>info1</p>
-                                    <p>info2</p>
-                                    <p>info3</p>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                    <div className="map__area">
+                        <div ref={mapElement} style={{ minHeight: '100%' }}></div>
+                    </div>
+
+                    <div className="bookMark__area">
+                        <h3>
+                            <FontAwesomeIcon icon={faBookmark} style={{ color: "#F4BB44" }} />
+                            북마크</h3>
+                        <ul>
+                            {
+                                bookmark.map()
+                            }
+                        </ul>
+                    </div>
+
                 </div>
             </section>
         </main>
