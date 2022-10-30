@@ -1,8 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
+import { setInterceptor } from '../utill';
 
 
 
@@ -103,17 +104,41 @@ p::before {
 
 
 
-
 function Signin() {
 
+
+    const history = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onValue = (data) => {
-        axios.post('http://localhost:3000', {
-            id: Date.now(),
-            userId: data.email,
-            userPw: data.pw
-        }).then(res => console.log(res))
+        axios.post('http://localhost:3000/auth/login', {
+            email: data.email,
+            pw: data.pw
+        }).then(res => {
+            localStorage.setItem('토큰', res.data.userToken)
+            // localstorage에 넣으면 새로고침해도 없어지지 않음
+            // axios.intercept해놓은 것들은 새로고침하면 없어짐
+
+
+            // 서버로 통신을 보낼 때 헤더에 토큰을 넣어서 보낼 수 있다. 
+            // 매번 통신할때마다 넣어서 보내줘도 됨 => 이걸 도와준게 setInterceptor
+
+            // 1. header에 토큰 넣는 로직하고
+            setInterceptor(res.data.userToken)
+
+            // 새로고침을 해도 로컬스토리지에 토큰은 남아있음.
+            // 근데 setInterceptor 토큰은 사라짐 그래서 axios header 토큰을 다시 넣어줌
+
+            // 새로고침을 했을 때 리액트 어플리케이션이 다시 시작됨
+            // localstorage는 남아있지만 axios intercept는 사라짐
+
+            // 리액트 애플리케이션이 최초로 시작되는 부분에 로직을 만듬
+            // 1. 로컬스토리지에 생성한 토큰이 있는지 확인.
+            // 2. 있다면 해당 토큰을 인터셉터에 넣어줌
+
+            history('/main')
+
+        })
     }
     return (
         <SigninPage>

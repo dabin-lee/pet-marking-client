@@ -83,7 +83,11 @@ function Main() {
     useEffect(() => {
         axios.get('/bookmark/data.json')
             .then((res) => setBookmark(res.data.bookmark))
+
+        axios.get('http://localhost:3000/good')
+            .then((res) => console.log(res))
     }, [])
+
     return (
         <main>
             <Header
@@ -104,11 +108,11 @@ function Main() {
                         <h3>
                             <FontAwesomeIcon icon={faBookmark} style={{ color: "#F4BB44" }} />
                             북마크</h3>
-                        <ul>
+                        {/* <ul>
                             {
                                 bookmark.map()
                             }
-                        </ul>
+                        </ul> */}
                     </div>
 
                 </div>

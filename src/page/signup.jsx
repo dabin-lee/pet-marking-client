@@ -104,14 +104,17 @@ export default function Signup() {
     const { register, handleSubmit, setError, formState: { errors } } = useForm({ mode: 'onBlur' })
     const pw = useRef()
     const onValue = (data) => {
-        axios.post('http://localhost:3000/register', {
+        axios.post('http://localhost:3000/auth/register', {
             email: data.email,
             pw: data.pw,
             pwComfirm: data.pwComfirm,
             name: data.name
         }).then((res) => {
+            console.log(res)
             alert('회원가입이 완료되었습니다.')
-            localStorage.setItem('token', res.data.jwt)
+            localStorage.setItem('token', res.data.userToken)
+            // 서버에서 만든토큰을 클라이언트에서 저장
+            // 액세스토큰 로컬스토리지에 넣음
             history('/')
         })
     }
@@ -165,7 +168,7 @@ export default function Signup() {
                         {/* <ErrorMessage
                             errors={errors}
                             name="pwComfirm"
-                            render={({ message }) => <p>성별을 선택하세요</p>}
+                            render={({ message }) => <p>비밀번호가 일치하지 않습니다.</p>}
                         /> */}
                         <input type="text"
                             className="name"
