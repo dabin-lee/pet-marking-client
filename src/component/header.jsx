@@ -1,10 +1,22 @@
 
 import React from 'react'
-import Loginform from '../component/loginform'
+// import Loginform from '../component/loginform'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faUser, faBell } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 function Header({ search, chgSearch, searchInput, searchPlace }) {
+
+
+    const userInfo = () => {
+        axios.get('http://localhost:3000/auth/login').then(res => console.log(
+            res._id,
+            res.name,
+            res.email
+        ))
+    }
+
+
     return (
         <header>
             <div className="inner">
@@ -31,15 +43,17 @@ function Header({ search, chgSearch, searchInput, searchPlace }) {
 
                     <div className="navbar-login">
                         {/* <Loginform /> */}
-                        <a href="/">
+                        <button>
                             <FontAwesomeIcon icon={faBell} />
                             <span>message</span>
-                        </a>
+                        </button>
 
-                        <a href="/">
+                        <button
+                            onClick={userInfo}
+                        >
                             <FontAwesomeIcon icon={faUser} />
                             <span>User</span>
-                        </a>
+                        </button>
                         <button>로그아웃</button>
                     </div>
 

@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
 import { setInterceptor } from '../utill';
-
-
-
+import { useRecoilState } from 'recoil';
+import { userAtom } from '../atom/user.atom';
+import { useEffect } from 'react';
 const SigninPage = styled.div`
     display: flex;
     justify-content: center;
@@ -102,44 +102,88 @@ p::before {
     }
 `
 
-
-
 function Signin() {
 
 
     const history = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm()
+    const [chk, setChk] = useState(false)
+    const [userState, setUserState] = useRecoilState(userAtom)
+    const [keepUser, setKeepUser] = useState("")
 
-    const onValue = (data) => {
-        axios.post('http://localhost:3000/auth/login', {
-            email: data.email,
-            pw: data.pw
-        }).then(res => {
-            localStorage.setItem('토큰', res.data.userToken)
-            // localstorage에 넣으면 새로고침해도 없어지지 않음
-            // axios.intercept해놓은 것들은 새로고침하면 없어짐
+    const onValue = async (data) => {
+        console.log(data.email.value)
+        try {
+            const result = await axios.post('http://localhost:3000/auth/login', {
+                email: data.email,
+                pw: data.pw
+            })
+            console.log('result: ', result);
 
-
-            // 서버로 통신을 보낼 때 헤더에 토큰을 넣어서 보낼 수 있다. 
-            // 매번 통신할때마다 넣어서 보내줘도 됨 => 이걸 도와준게 setInterceptor
-
-            // 1. header에 토큰 넣는 로직하고
-            setInterceptor(res.data.userToken)
-
-            // 새로고침을 해도 로컬스토리지에 토큰은 남아있음.
-            // 근데 setInterceptor 토큰은 사라짐 그래서 axios header 토큰을 다시 넣어줌
-
-            // 새로고침을 했을 때 리액트 어플리케이션이 다시 시작됨
-            // localstorage는 남아있지만 axios intercept는 사라짐
-
-            // 리액트 애플리케이션이 최초로 시작되는 부분에 로직을 만듬
-            // 1. 로컬스토리지에 생성한 토큰이 있는지 확인.
-            // 2. 있다면 해당 토큰을 인터셉터에 넣어줌
-
+            if (result.data.message) {
+                alert(result.data.message)
+            }
+            localStorage.setItem('토큰', result.data.loginToken)
+            setInterceptor(result.data.loginToken)
+            setUserState(
+                {
+                    id: result.data.userId,
+                    name: result.data.name
+                }
+            )
+            // 로그인 성공시 id저장
+            localStorage.setItem('USER_ID', result.data.userId)
+            localStorage.setItem('REMEBER_ID', JSON.parse(chk))
             history('/main')
+        } catch (err) {
+            if (err?.response?.status === 401) {
+                alert(err?.response?.data?.message)
+            } else {
+                // 제어하지 못하는 에러 => 서버에 로그로 남김
+                alert('서버요청에 실패했습니다.')
+            }
+        }
+        // }).then(res => {
+        //     // 만약 message가 있다면? 출력
+        //     if (res.data.message) {
+        //         alert(res.data.message)
+        //     }
+        //     localStorage.setItem('토큰', res.data.loginToken)
+        //     localStorage.setItem('id', res.data.userId)
 
-        })
+        //     setInterceptor(res.data.loginToken)
+        //     history('/main')
+        // }).catch(err => {
+        //     if (err?.response?.status === 401) {
+        //         alert(err?.response?.data?.message)
+        //     } else {
+        //         // 제어하지 못하는 에러 => 서버에 로그로 남김
+        //         alert('서버요청에 실패했습니다.')
+        //     }
+        // })
+
+        // noijoijo
     }
+
+    const remeberId = (e) => {
+        if (e.target.checked) {
+            setChk(true)
+        }
+        else {
+            setChk(false)
+        }
+    }
+
+    useEffect(() => {
+        let idFlag = JSON.parse(localStorage.getItem("REMEBER_ID"))
+        let userId = window.localStorage.getItem("USER_ID")
+        if (idFlag) {
+            setChk(idFlag)
+        }
+        userId ? setKeepUser(userId) : setKeepUser(null)
+    }, [])
+
+
     return (
         <SigninPage>
             <div className="wrapper">
@@ -148,16 +192,31 @@ function Signin() {
                         <img src={`${process.env.PUBLIC_URL}/marking_dog.png`} alt='펫마킹' style={{ width: '150px' }} />
                     </h2>
                     <form onSubmit={handleSubmit(onValue)} >
-                        <input type="text"
-                            className="useremail"
-                            placeholder="이메일"
-                            {...register("email", {
-                                required: true,
-                                pattern: {
-                                    value: /\S+@\S+\.\S+/
-                                }
-                            })}
-                        />
+                        {
+                            chk ?
+                                <input type="text"
+                                    className="useremail"
+                                    placeholder="이메일"
+                                    value={keepUser}
+                                    {...register("email", {
+                                        required: true,
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/
+                                        }
+                                    })}
+                                />
+                                :
+                                <input type="text"
+                                    className="useremail"
+                                    placeholder="이메일"
+                                    {...register("email", {
+                                        required: true,
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/
+                                        }
+                                    })}
+                                />
+                        }
                         {errors.email && errors.email.type === "required" && <p>이메일을 입력해 주세요.</p>}
                         {errors.email?.type === "pattern" && <p>이메일 형식에 맞지 않습니다.</p>}
 
@@ -174,10 +233,19 @@ function Signin() {
 
                         <label className="checkbox" >
                             <input type="checkbox"
-                                value="rememberMe"
                                 id="rememberMe"
+                                //onChange={eventLogin} //get토큰에서 isUnLimit 부분 true. false
+                                value={chk}
                             /> 로그인 상태 유지
                         </label >
+                        <label className="checkbox" >
+                            <input type="checkbox"
+                                id="rememberEmail"
+                                onChange={remeberId}
+                                checked={chk}
+                            /> email 기억하기
+                        </label >
+                        {/* true일 경우 localstrage에 있는 id를 input에 유지시키기 */}
                         <button type="submit">
                             <span>로그인</span>
                         </button>
@@ -192,3 +260,10 @@ function Signin() {
 }
 
 export default Signin
+
+
+// 로그인 유지를 눌렀을 때 chk => true
+// true일 경우 localstorage에 id를 저장
+// fasle일 경우 localstorage clear
+
+// login페이지 렌더링이 됐을 때 localstorage에 id가 있으면 email input에 id표시

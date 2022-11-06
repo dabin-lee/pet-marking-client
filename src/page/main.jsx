@@ -5,9 +5,12 @@ import Header from '../component/header'
 import Bookmark from '../component/Bookmark'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/free-solid-svg-icons'
-
+import { useRecoilState } from 'recoil';
+import { userAtom } from '../atom/user.atom';
 
 function Main() {
+
+    const [userState, setUserState] = useRecoilState(userAtom)
 
     const [bookmark, setBookmark] = useState([])
     const [search, setSearch] = useState('')
@@ -18,8 +21,10 @@ function Main() {
     const mapElement = useRef(null)
     const searchInput = useRef(null)
 
+
     useEffect(() => {
         // console.log('map: ', map);
+        console.log('userState: ', userState);
         searchInput.current.focus()
         if (!map) {
             const options = { //지도를 생성할 때 필요한 기본 옵션
@@ -29,6 +34,7 @@ function Main() {
 
             const newMap = new window.kakao.maps.Map(mapElement.current, options) //지도 생성 및 객체 리턴
             setMap(newMap)
+
         }
     }, [])
 
@@ -83,9 +89,6 @@ function Main() {
     useEffect(() => {
         axios.get('/bookmark/data.json')
             .then((res) => setBookmark(res.data.bookmark))
-
-        axios.get('http://localhost:3000/good')
-            .then((res) => console.log(res))
     }, [])
 
     return (
@@ -107,13 +110,15 @@ function Main() {
                     <div className="bookMark__area">
                         <h3>
                             <FontAwesomeIcon icon={faBookmark} style={{ color: "#F4BB44" }} />
-                            북마크</h3>
+                            {userState.id} 북마크</h3>
+
                         {/* <ul>
                             {
                                 bookmark.map()
                             }
                         </ul> */}
                     </div>
+
 
                 </div>
             </section>

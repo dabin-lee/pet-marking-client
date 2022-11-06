@@ -110,11 +110,7 @@ export default function Signup() {
             pwComfirm: data.pwComfirm,
             name: data.name
         }).then((res) => {
-            console.log(res)
-            alert('회원가입이 완료되었습니다.')
-            localStorage.setItem('token', res.data.userToken)
-            // 서버에서 만든토큰을 클라이언트에서 저장
-            // 액세스토큰 로컬스토리지에 넣음
+            alert('회원가입이 완료됐습니다.')
             history('/')
         })
     }
