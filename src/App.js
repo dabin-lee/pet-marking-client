@@ -1,14 +1,20 @@
 
 import './App.scss';
+import './App.css';
 import Main from './page/main'
 import Signin from './page/signin';
 import Signup from './page/signup';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { setInterceptor } from './utill'
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { userAtom } from './atom/user.atom';
+import { ChakraProvider } from '@chakra-ui/react'
+// import { css } from '@emotion/css'
+import { extendTheme } from '@chakra-ui/react'
+// import Header from './component/header';
+import Nav from './component/Nav';
 
 const App = () => {
 
@@ -42,21 +48,49 @@ const App = () => {
       history('/')
     }
   }, [])
+  const theme = extendTheme({
+    colors: {
+      brand: {
+        100: "#F4BB44",
+        900: "#1a202c",
+      },
+    },
+    fontWeights: {
+      normal: 400,
+      medium: 500,
+      bold: 700,
+    },
+  })
 
   return (
     <>
       {
         isInit ?
           (
-            < Routes >
-              <Route path="/" element={<Signin />}></Route>
-              <Route path="/signup" element={<Signup />}></Route>
-              <Route index path="/main" element={<Main />}></Route>
-            </Routes >
+            <ChakraProvider theme={theme}>
+              <Routes>
+                <Route path="/" element={<Signin />}></Route>
+                <Route path="/signup" element={<Signup />}></Route>
+
+                <Route path="/main" element={<Layout />}>
+                  <Route index path="" element={<Main />} />
+                  {/* <Route path="/user" element={<User />} /> */}
+                </Route>
+              </Routes >
+            </ChakraProvider>
           ) : ' '
       }
     </>
   );
 }
 
+
+const Layout = () => {
+  return (
+    <div>
+      <Nav />
+      <Outlet />
+    </div>
+  )
+}
 export default App;

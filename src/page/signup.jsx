@@ -101,7 +101,7 @@ export default function Signup() {
 
     const history = useNavigate()
 
-    const { register, handleSubmit, setError, formState: { errors } } = useForm({ mode: 'onBlur' })
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' })
     const pw = useRef()
     const onValue = (data) => {
         axios.post('http://localhost:3000/auth/register', {
@@ -115,6 +115,7 @@ export default function Signup() {
         })
     }
 
+    console.log(watch('pw'))
     return (
         <SignupPage>
             <div className="wrapper">
@@ -138,34 +139,28 @@ export default function Signup() {
                         <input type="password"
                             placeholder="비밀번호"
                             {...register("pw", {
-                                required: true,
-                                minLength: 8
+                                required: "비밀번호를 입력해 주세요.",
+                                minLength: {
+                                    value: 8,
+                                    message: "8글자 이상 입력해주세요."
+                                }
                             })}
                         />
-                        {errors.pw?.type === "required" && <p>비밀번호를 입력해 주세요.</p>}
-                        {errors.pw?.type === "minLength" && <p>8글자 이상 입력해주세요.</p>}
+                        {errors.pw && <p>{errors.pw.message}</p>}
 
                         <input type="password"
                             placeholder="비밀번호"
                             {...register("pwComfirm", {
-                                required: true,
-                                minLength: 8,
-                                validate: (value) => {
-                                    if (value !== pw) {
-                                        // setError(
-                                        //     "pwComfirm",
-                                        //     { message: { message } },
-                                        // )
+                                required: "비밀번호를 입력해 주세요.",
+                                validate: value => {
+                                    if (watch('pw') !== value) {
+                                        return "The passwords do not match"
                                     }
                                 }
                             })}
                         />
-                        {errors.pw?.type === "minLength" && <p>8글자 이상 입력해주세요.</p>}
-                        {/* <ErrorMessage
-                            errors={errors}
-                            name="pwComfirm"
-                            render={({ message }) => <p>비밀번호가 일치하지 않습니다.</p>}
-                        /> */}
+                        {errors.pwComfirm && <p>{errors.pwComfirm.message}</p>}
+
                         <input type="text"
                             className="name"
                             placeholder="이름"

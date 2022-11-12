@@ -1,8 +1,16 @@
 import React from 'react'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+
 function Bookmark() {
     return (
         <>
+
+            <h3>
+                <FontAwesomeIcon icon={faBookmark} style={{ color: "#F4BB44" }} />
+                북마크
+            </h3>
             <div className="imgbox">
                 <img src="./images/hotel1.jpg" alt="" />
             </div>

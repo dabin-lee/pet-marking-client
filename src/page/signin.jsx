@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios';
 import { setInterceptor } from '../utill';
 import { useRecoilState } from 'recoil';
-import { userAtom } from '../atom/user.atom';
+import { userAtom, keepId } from '../atom/user.atom';
 import { useEffect } from 'react';
 const SigninPage = styled.div`
     display: flex;
@@ -107,9 +107,10 @@ function Signin() {
 
     const history = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [chk, setChk] = useState(false)
+    const [chk, setChk] = useRecoilState(keepId)
     const [userState, setUserState] = useRecoilState(userAtom)
     const [keepUser, setKeepUser] = useState("")
+    // const [KeepId, setKeepId] = useRecoilState(userKeep)
 
     const onValue = async (data) => {
         console.log(data.email.value)
@@ -177,10 +178,11 @@ function Signin() {
     useEffect(() => {
         let idFlag = JSON.parse(localStorage.getItem("REMEBER_ID"))
         let userId = window.localStorage.getItem("USER_ID")
+        let noUserId = window.localStorage.setItem("USER_ID_null", '')
         if (idFlag) {
             setChk(idFlag)
         }
-        userId ? setKeepUser(userId) : setKeepUser(null)
+        userId ? setKeepUser(userId) : setKeepUser(noUserId)
     }, [])
 
 
@@ -231,13 +233,13 @@ function Signin() {
                         {errors.pw?.type === "required" && <p>비밀번호를 입력해 주세요.</p>}
                         {errors.pw?.type === "minLength" && <p>8자리 이상 입력해 주세요.</p>}
 
-                        <label className="checkbox" >
+                        {/* <label className="checkbox" >
                             <input type="checkbox"
                                 id="rememberMe"
                                 //onChange={eventLogin} //get토큰에서 isUnLimit 부분 true. false
                                 value={chk}
                             /> 로그인 상태 유지
-                        </label >
+                        </label > */}
                         <label className="checkbox" >
                             <input type="checkbox"
                                 id="rememberEmail"

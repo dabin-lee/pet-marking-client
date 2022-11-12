@@ -60,9 +60,6 @@ main {
 /* header */
 header {
     width: 100%;
-    // position: relative;
-    // top: 0;
-    // height: 227px;
     background-color: #F6F5F0;
     border-bottom: 1px solid #c8c8c8;
 
@@ -74,81 +71,81 @@ header {
 
 
 // nav
-.nav {
-    display: flex;
-    justify-content: flex-end;
-    // height: 150px;
+// .nav {
+//     display: flex;
+//     justify-content: flex-end;
+//     // height: 150px;
 
-    .logo {
-        display: grid;
-        align-content: center;
-        width: 200px;
-        padding-bottom: 20px;
+//     .logo {
+//         display: grid;
+//         align-content: center;
+//         width: 200px;
+//         padding-bottom: 20px;
 
-        img {
-            width: 100%;
-        }
-    }
-}
+//         img {
+//             width: 100%;
+//         }
+//     }
+// }
 
 
 
 // search
 
-.searchBox {
+// .searchBox {
 
-    display: flex;
-    position: relative;
-    align-items: center;
-    width: 100%;
-    padding: 0 30px;
+//     display: flex;
+//     position: relative;
+//     align-items: center;
+//     width: 100%;
+//     padding: 0 30px;
 
-    .submitBox {
-        width: 100%;
+//     .submitBox {
+//         width: 100%;
 
-        input {
-            width: 100%;
-            height: 50px;
-            padding: $defaultsize;
-            font-size: 1.5rem;
-            border-radius: 10px;
-            border: none;
-            outline: none;
-            box-sizing: border-box;
-        }
+//         input {
+//             width: 100%;
+//             height: 50px;
+//             padding: $defaultsize;
+//             font-size: 1.5rem;
+//             border-radius: 10px;
+//             border: none;
+//             outline: none;
+//             box-sizing: border-box;
+//         }
 
-        input::placeholder {
-            color: rgb(231, 231, 231);
-            font-style: italic;
-        }
+//         input::placeholder {
+//             color: rgb(231, 231, 231);
+//             font-style: italic;
+//         }
 
-        input:focus-within {
-            border: 1px solid $mango;
-            box-shadow: 6px 6px 11px -8px rgba(0, 0, 0, 0.57);
+//         input:focus-within {
+//             border: 1px solid $mango;
+//             box-shadow: 6px 6px 11px -8px rgba(0, 0, 0, 0.57);
 
-        }
+//         }
 
-    }
+//     }
 
-    .searchBtn {
-        position: absolute;
-        right: 50px;
+//     .searchBtn {
+//         position: absolute;
+//         right: 50px;
 
-        button {
-            margin: 0;
-            padding: 10px 16px;
-            background: none;
-            border: none;
-            cursor: pointer;
+//         button {
+//             margin: 0;
+//             padding: 10px 16px;
+//             background: none;
+//             border: none;
+//             cursor: pointer;
 
-            svg {
-                height: 1.5rem;
-                color: $mango
-            }
-        }
-    }
+//             svg {
+//                 height: 1.5rem;
+//                 color: $mango
+//             }
+//         }
+//     }
 
-}
+// }
 
 // loginBox
 .loginForm {
@@ -285,22 +282,26 @@ header {
 .navbar-login {
     @include flexLayout;
 
-    a {
-        display: block;
-        padding: 12px;
+    // a {
+    //     display: block;
+    //     padding: 12px;
+
+    //     span {
+    //         @include hidden;
+    //     }
+    // }
+
+    button {
+        // width: 80px;
+        // height: 32px;
+        // margin-left: 5px;
+        // border: none;
+        // border-radius: 3px;
+        // background-color: $mango;
+        // color: #fff;
 
         span {
             @include hidden;
         }
-    }
-
-    button {
-        width: 80px;
-        height: 32px;
-        margin-left: 5px;
-        border: none;
-        border-radius: 3px;
-        background-color: $mango;
-        color: #fff;
     }
 }
