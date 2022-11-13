@@ -4,6 +4,13 @@ import { css } from '@emotion/react'
 
 function StoreList({ placesList, placeElem }) {
 
+    // useEffect(() => {
+    //     randomStore()
+    // }, [])
+
+    // const randomStore= () => {
+
+    // }
     const place = css`
         object-fit: contain;
         margin: 5px 5px 0 0;
@@ -15,7 +22,6 @@ function StoreList({ placesList, placeElem }) {
             transform: scale(1.1);
         }
         `
-
     const info = css`
             display: flex;
             width: 300px;
@@ -33,9 +39,11 @@ function StoreList({ placesList, placeElem }) {
             background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;        
             `
 
+
+
     return (
         <>
-            <Text fontSize={20}>내 주변 반려동물 동반 장소</Text>
+            <Text fontSize={20}>추천 장소</Text>
 
             <span className="arrow"
                 onClick={() => placeElem.current.scrollLeft -= window.innerWidth - 80}
