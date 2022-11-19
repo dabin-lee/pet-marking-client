@@ -15,3 +15,8 @@ export const keepId = atom({
     key: "loginState",
     default: false
 })
+
+export const mustgo = atom({
+    key: "changePlaceState",
+    default: []
+})

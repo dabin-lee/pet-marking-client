@@ -10,30 +10,35 @@ import randomImg from '../API/unsplash'
 
 function Bookmark() {
     const [list, setList] = useState([])
-    const [mealThumb, setMealThumb] = useState([])
-    // const [backImgUrl, setBackImgUrl] = useState("");
+
     useEffect(() => {
         bookmarkList()
-        bookmarkImg()
     }, [])
 
     const bookmarkList = async () => {
         try {
-            const request = await axios.get("http://localhost:3000/store/bookmark")
-            setList(request.data)
+            const [bookmarkRes, imagesRes] = await Promise.all([
+                axios.get("http://localhost:3000/store/bookmark"),
+                randomImg.get()
+            ])
+            // const bookmarkRes = await axios.get("http://localhost:3000/store/bookmark")
+            // const imagesRes = await randomImg.get()
+            setList(bookmarkRes.data.map((bookmark, index) => {
+                bookmark.place_image = imagesRes.data[index].urls.small
+                return bookmark
+            })
+
+                // setList(bookmarkRes.data.map((bookmark, index) => ({
+                //     ...bookmark,
+                //     place_image: imagesRes.data[index].urls.small
+                // }))
+            )
         }
         catch (err) {
             console.log(err)
         }
     }
 
-    const bookmarkImg = async () => {
-        const response = await randomImg.get()
-        console.log('response: ', response);
-        const randomId = response.data[Math.floor(Math.random() * 30)].urls.small
-        setMealThumb(randomId)
-    }
-    console.log(mealThumb)
 
     const storeList = css`
     max-height: 440px;
@@ -72,12 +77,11 @@ function Bookmark() {
             margin-left: 6px;
         }
     `
-
-    // const randomImg = (idx) => {
-    //     const randomId = mealThumb.data[Math.floor(Math.random() * 30) + idx].urls.small
-    //     // setMealThumb(randomId)
-    //     return randomId
-    // }
+    const imgbox = css`
+        max-width: 200px;
+        height: 150px;
+        overflow: hidden;
+    `
 
     return (
         <>
@@ -88,9 +92,9 @@ function Bookmark() {
             <ul css={storeList}>
                 {
                     list.map((store, index) => (
-                        <Flex css={listItem} key={store.id}>
-                            <div className="imgbox">
-                                {/* <img src={() => randomImg(index)} alt="" width={200} /> */}
+                        <Flex css={listItem} key={store._id}>
+                            <div css={imgbox}>
+                                <img src={store.place_image} alt="unsplash random" width="100%" />
                             </div>
                             <div className="cont">
                                 <p>{store.place_name}</p>

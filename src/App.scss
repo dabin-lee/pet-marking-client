@@ -3,35 +3,6 @@ $mango : #F4BB44;
 $defaultsize: 1rem;
 
 
-/* common */
-@mixin hidden {
-    position: absolute;
-    clip: rect(0 0 0 0);
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-}
-
-@mixin inner {
-    position: relative;
-    width: 1100px;
-    margin: 0 auto;
-}
-
-@mixin flexLayout {
-    display: flex;
-    align-items: center;
-}
-
-@mixin gridLayout {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-gap: 1rem;
-    text-align: center;
-    font-size: &-default;
-}
-
 label>span {
     position: absolute;
     visibility: hidden;
@@ -58,16 +29,16 @@ main {
 }
 
 /* header */
-header {
-    width: 100%;
-    background-color: #F6F5F0;
-    border-bottom: 1px solid #c8c8c8;
+// header {
+//     width: 100%;
+//     background-color: #F6F5F0;
+//     border-bottom: 1px solid #c8c8c8;
 
-    .inner {
-        @include inner;
-        padding: 20px 0;
-    }
-}
+//     .inner {
+//         @include inner;
+//         padding: 20px 0;
+//     }
+// }
 
 
 // nav

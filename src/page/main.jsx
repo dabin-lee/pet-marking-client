@@ -7,6 +7,8 @@ import Header from '../component/header'
 import Bookmark from '../component/Bookmark'
 import StoreList from '../component/StoreList'
 import ItemModal from '../modal/Modal'
+import TestBox from '../component/TestBox'
+import { useMemo } from 'react'
 
 const Main = () => {
 
@@ -17,12 +19,14 @@ const Main = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [modalItem, setModalItem] = useState({})
+
+    const [mustgo, setMustgo] = useState(false) //검색이 완료되면 true (storeList에서 사용)
     // const [bookmark, setBookmark] = useState(false)
 
     const overlayRef = useRef(null)
     const mapElement = useRef(null) //지도영역
     const searchInput = useRef(null)
-    const placeElem = useRef(null)
+    // const placeElem = useRef(null)
 
     useEffect(() => {
         searchInput.current.focus()
@@ -36,17 +40,19 @@ const Main = () => {
             setMap(newMap)
         }
         // 키워드로 장소를 검색합니다
-        searchPlace();
+        // searchPlace();
     }, [])
+
+    // usestate값이 변경되고 나서 동작을 해야한다면 별도로 useEffect만들어서 해야해 ★
+    useEffect(() => {
+        // 키워드로 장소를 검색합니다
+        if (map) searchPlace();
+    }, [map]) //map이 있으면 실행 
 
     // 장소 검색 객체를 생성합니다
     var ps = new kakao.maps.services.Places();
 
     const chgSearch = (e) => setSearch(e.target.value)
-
-    // random MAP
-    // setPlacesList안에 검색이 완료된 데이터를 넣는다.
-
 
 
     // 키워드 검색을 요청하는 함수입니다
@@ -76,17 +82,19 @@ const Main = () => {
 
             // 검색완료 된 data 전달
             setPlacesList(data)
+            setMustgo(true)
         }
     }
 
     // 검색 결과 목록과 마커를 표출하는 함수입니다
     function displayPlaces(places) {
+        console.log('places: ', places);
 
-        var listEl = placeElem.current,
-            bounds = new kakao.maps.LatLngBounds()
+        // var listEl = placeElem.current,
+        const bounds = new kakao.maps.LatLngBounds()
 
         // 검색 결과 목록에 추가된 항목들을 제거합니다
-        removeAllChildNods(listEl);
+        // removeAllChildNods(listEl);
 
         // 지도에 표시되고 있는 마커를 제거합니다
         removeMarker();
@@ -199,6 +207,16 @@ const Main = () => {
         setModalItem(place)
         closeOverlay()
     }
+
+    const memoStore = useMemo(
+        () => { return <StoreList placesList={placesList} mustgo={mustgo} /> },
+        [placesList, mustgo]
+    )
+
+
+
+
+
     return (
 
         <main>
@@ -215,22 +233,15 @@ const Main = () => {
                 p={3}>
 
                 <GridItem rowSpan={1} colSpan={1} borderRadius="15" h={500}>
-                    {/* <Map mapElement={mapElement} /> */}
                     <div ref={mapElement} style={{ minHeight: '500px' }}></div>
                 </GridItem>
-
-                {/* <GridItem>
-                    <Categories />
-                </GridItem> */}
 
                 <GridItem>
                     <Bookmark />
                 </GridItem>
             </Grid >
 
-            <Box p={3}>
-                <StoreList placeElem={placeElem} placesList={placesList} />
-            </Box>
+            {memoStore}
 
             <ItemModal isOpen={isOpen} onClose={onClose} modalItem={modalItem} />
         </main >

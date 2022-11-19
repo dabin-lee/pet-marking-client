@@ -1,20 +1,19 @@
 
-import './App.scss';
+// import './App.scss';
 import './App.css';
 import Main from './page/main'
 import Signin from './page/signin';
 import Signup from './page/signup';
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
+import { Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { setInterceptor } from './utill'
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { userAtom } from './atom/user.atom';
 import { ChakraProvider } from '@chakra-ui/react'
-// import { css } from '@emotion/css'
 import { extendTheme } from '@chakra-ui/react'
-// import Header from './component/header';
 import Nav from './component/Nav';
+import User from './page/User.jsx'
 
 const App = () => {
 
@@ -48,6 +47,7 @@ const App = () => {
       history('/')
     }
   }, [])
+
   const theme = extendTheme({
     colors: {
       brand: {
@@ -73,8 +73,8 @@ const App = () => {
                 <Route path="/signup" element={<Signup />}></Route>
 
                 <Route path="/main" element={<Layout />}>
-                  <Route index path="" element={<Main />} />
-                  {/* <Route path="/user" element={<User />} /> */}
+                  <Route index element={<Main />} />
+                  <Route path="/main/user" element={<User />} />
                 </Route>
               </Routes >
             </ChakraProvider>

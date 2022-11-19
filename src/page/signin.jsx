@@ -106,11 +106,9 @@ function Signin() {
 
 
     const history = useNavigate()
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm()
     const [chk, setChk] = useRecoilState(keepId)
     const [userState, setUserState] = useRecoilState(userAtom)
-    const [keepUser, setKeepUser] = useState("")
-    // const [KeepId, setKeepId] = useRecoilState(userKeep)
 
     const onValue = async (data) => {
         console.log(data.email.value)
@@ -144,26 +142,6 @@ function Signin() {
                 alert('서버요청에 실패했습니다.')
             }
         }
-        // }).then(res => {
-        //     // 만약 message가 있다면? 출력
-        //     if (res.data.message) {
-        //         alert(res.data.message)
-        //     }
-        //     localStorage.setItem('토큰', res.data.loginToken)
-        //     localStorage.setItem('id', res.data.userId)
-
-        //     setInterceptor(res.data.loginToken)
-        //     history('/main')
-        // }).catch(err => {
-        //     if (err?.response?.status === 401) {
-        //         alert(err?.response?.data?.message)
-        //     } else {
-        //         // 제어하지 못하는 에러 => 서버에 로그로 남김
-        //         alert('서버요청에 실패했습니다.')
-        //     }
-        // })
-
-        // noijoijo
     }
 
     const remeberId = (e) => {
@@ -178,11 +156,10 @@ function Signin() {
     useEffect(() => {
         let idFlag = JSON.parse(localStorage.getItem("REMEBER_ID"))
         let userId = window.localStorage.getItem("USER_ID")
-        let noUserId = window.localStorage.setItem("USER_ID_null", '')
-        if (idFlag) {
-            setChk(idFlag)
-        }
-        userId ? setKeepUser(userId) : setKeepUser(noUserId)
+
+        if (idFlag) setChk(idFlag)
+        if (userId) setValue("email", userId)
+
     }, [])
 
 
@@ -194,31 +171,16 @@ function Signin() {
                         <img src={`${process.env.PUBLIC_URL}/marking_dog.png`} alt='펫마킹' style={{ width: '150px' }} />
                     </h2>
                     <form onSubmit={handleSubmit(onValue)} >
-                        {
-                            chk ?
-                                <input type="text"
-                                    className="useremail"
-                                    placeholder="이메일"
-                                    value={keepUser}
-                                    {...register("email", {
-                                        required: true,
-                                        pattern: {
-                                            value: /\S+@\S+\.\S+/
-                                        }
-                                    })}
-                                />
-                                :
-                                <input type="text"
-                                    className="useremail"
-                                    placeholder="이메일"
-                                    {...register("email", {
-                                        required: true,
-                                        pattern: {
-                                            value: /\S+@\S+\.\S+/
-                                        }
-                                    })}
-                                />
-                        }
+                        <input type="text"
+                            className="useremail"
+                            placeholder="이메일"
+                            {...register("email", {
+                                required: true,
+                                pattern: {
+                                    value: /\S+@\S+\.\S+/
+                                }
+                            })}
+                        />
                         {errors.email && errors.email.type === "required" && <p>이메일을 입력해 주세요.</p>}
                         {errors.email?.type === "pattern" && <p>이메일 형식에 맞지 않습니다.</p>}
 
