@@ -1,5 +1,3 @@
-
-// import './App.scss';
 import './App.css';
 import Main from './page/main'
 import Signin from './page/signin';
