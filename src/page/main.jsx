@@ -1,32 +1,38 @@
 /* global kakao*/
-import React, { useRef, useEffect, useState } from 'react'
-import { Grid, GridItem, Box, useDisclosure } from '@chakra-ui/react'
+import React, { useRef, useEffect, useState, useMemo } from 'react'
+// import { useMemo } from 'react'
+import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
+import axios from 'axios'
 
 // components
 import Header from '../component/header'
 import Bookmark from '../component/Bookmark'
 import StoreList from '../component/StoreList'
 import ItemModal from '../modal/Modal'
-import TestBox from '../component/TestBox'
-import { useMemo } from 'react'
+import randomImg from '../API/unsplash'
+
+// recoil
+import { useRecoilState } from 'recoil';
+import { unsplashImg } from '../atom/user.atom';
+import { getHostUrl } from '../util/http.util'
+
 
 const Main = () => {
 
-    const [search, setSearch] = useState('이태원 맛집')
+    const [search, setSearch] = useState('')
     const [map, setMap] = useState(null)
     const [placesList, setPlacesList] = useState([]) //키워드 검색 후 목록
     const [markers, setMarkers] = useState([]) // 마커를 담을 배열입니다
 
+    const [thumb, setThumb] = useRecoilState(unsplashImg)
+
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [modalItem, setModalItem] = useState({})
 
-    const [mustgo, setMustgo] = useState(false) //검색이 완료되면 true (storeList에서 사용)
-    // const [bookmark, setBookmark] = useState(false)
 
     const overlayRef = useRef(null)
     const mapElement = useRef(null) //지도영역
     const searchInput = useRef(null)
-    // const placeElem = useRef(null)
 
     useEffect(() => {
         searchInput.current.focus()
@@ -39,15 +45,32 @@ const Main = () => {
             const newMap = new window.kakao.maps.Map(mapElement.current, options) //지도 생성 및 객체 리턴
             setMap(newMap)
         }
-        // 키워드로 장소를 검색합니다
-        // searchPlace();
     }, [])
 
-    // usestate값이 변경되고 나서 동작을 해야한다면 별도로 useEffect만들어서 해야해 ★
+
+    // stroeList가 mustgo통신
     useEffect(() => {
-        // 키워드로 장소를 검색합니다
-        if (map) searchPlace();
-    }, [map]) //map이 있으면 실행 
+        recommendPlace()
+    }, [])
+
+
+    const recommendPlace = async () => {
+        try {
+            const [placeRes, randomPhoto] = await Promise.all([
+                axios.get(`${getHostUrl()}/store/mustgo`),
+                randomImg.get()
+            ])
+            // const Res = await axios.get("${getHostUrl()}/store/mustgo")
+            setPlacesList(placeRes.data.map((item) => {
+                item.id = item._id
+                return item
+            }))
+            setThumb(randomPhoto)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
 
     // 장소 검색 객체를 생성합니다
     var ps = new kakao.maps.services.Places();
@@ -66,7 +89,7 @@ const Main = () => {
         }
 
         // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-        ps.keywordSearch(keyword, placesSearchCB);
+        ps.keywordSearch(`반려동물 ${keyword}`, placesSearchCB);
     }
 
     // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
@@ -81,14 +104,25 @@ const Main = () => {
             displayPlaces(data);
 
             // 검색완료 된 data 전달
-            setPlacesList(data)
-            setMustgo(true)
+            listRandomImg(data)
+        }
+    }
+
+    const listRandomImg = async (data) => {
+        try {
+            setPlacesList(data.map((item, index) => {
+                item.place_image = thumb.data[index].urls.small
+                return item
+            }
+            ))
+        } catch (err) {
+            console.log(err)
         }
     }
 
     // 검색 결과 목록과 마커를 표출하는 함수입니다
     function displayPlaces(places) {
-        console.log('places: ', places);
+        // console.log('places: ', places);
 
         // var listEl = placeElem.current,
         const bounds = new kakao.maps.LatLngBounds()
@@ -119,12 +153,14 @@ const Main = () => {
 
     function makeMarkerClickListener(marker, place) {
         return () => {
+            if (overlayRef.current) closeOverlay()
             let content = getOverlayContent(place)
             let customOverlay = new kakao.maps.CustomOverlay({
                 content: content,
                 map: map,
                 position: marker.getPosition()
             });
+
 
             overlayRef.current = customOverlay
         }
@@ -151,7 +187,6 @@ const Main = () => {
                         <div class="desc">
                             <div class="ellipsis">${place?.road_address_name ?? place?.address_name}</div>
                             <div class="jibun ellipsis">${place?.phone}</div>
-                            <div><a href="${place?.place_url}" target="_blank" class="link">상세정보</a></div>
                         </div>
                     </div>
                 </div>
@@ -193,14 +228,6 @@ const Main = () => {
         setMarkers([])
     }
 
-
-    // 검색결과 목록의 자식 Element를 제거하는 함수입니다
-    function removeAllChildNods(el) {
-        while (el.hasChildNodes()) {
-            el.removeChild(el.lastChild);
-        }
-    }
-
     // 모달 오픈 
     const itemOpenModal = (place) => {
         onOpen()
@@ -209,8 +236,8 @@ const Main = () => {
     }
 
     const memoStore = useMemo(
-        () => { return <StoreList placesList={placesList} mustgo={mustgo} /> },
-        [placesList, mustgo]
+        () => { return <StoreList placesList={placesList} itemOpenModal={itemOpenModal} /> },
+        [placesList]
     )
 
 
@@ -230,7 +257,8 @@ const Main = () => {
             <Grid
                 templateColumns="repeat(2, 1fr)"
                 gap={3}
-                p={3}>
+                p={3}
+                style={{ minWidth: "1100px", padding: "10px 30px" }}>
 
                 <GridItem rowSpan={1} colSpan={1} borderRadius="15" h={500}>
                     <div ref={mapElement} style={{ minHeight: '500px' }}></div>

@@ -16,7 +16,12 @@ export const keepId = atom({
     default: false
 })
 
-export const mustgo = atom({
-    key: "changePlaceState",
+export const likeList = atom({
+    key: "bookMark",
+    default: []
+})
+
+export const unsplashImg = atom({
+    key: "unsplash",
     default: []
 })

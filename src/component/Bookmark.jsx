@@ -1,55 +1,67 @@
 import React from 'react'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { faBookmark, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { Flex } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import axios from 'axios'
-import randomImg from '../API/unsplash'
+
+// recoil
+import { useRecoilState } from 'recoil';
+import { likeList, unsplashImg } from '../atom/user.atom';
+import { getHostUrl } from '../util/http.util'
 
 function Bookmark() {
-    const [list, setList] = useState([])
+    const [list, setList] = useRecoilState(likeList)
+    const [thumb, setThumb] = useRecoilState(unsplashImg)
+    const [fadeTit, setFadeTit] = useState(false)
 
     useEffect(() => {
-        bookmarkList()
-    }, [])
+        console.log('북마크 화면');
+    }, []) //렌더링 후 한번만 호출
+
+    useEffect(() => {
+        if (thumb?.data?.length) bookmarkList()
+    }, [thumb])
 
     const bookmarkList = async () => {
         try {
-            const [bookmarkRes, imagesRes] = await Promise.all([
-                axios.get("http://localhost:3000/store/bookmark"),
-                randomImg.get()
-            ])
-            // const bookmarkRes = await axios.get("http://localhost:3000/store/bookmark")
-            // const imagesRes = await randomImg.get()
-            setList(bookmarkRes.data.map((bookmark, index) => {
-                bookmark.place_image = imagesRes.data[index].urls.small
-                return bookmark
-            })
-
-                // setList(bookmarkRes.data.map((bookmark, index) => ({
-                //     ...bookmark,
-                //     place_image: imagesRes.data[index].urls.small
-                // }))
-            )
+            const bookmarkRes = await axios.get(`${getHostUrl()}/store/bookmark`)
+            setList(bookmarkRes.data)
         }
         catch (err) {
             console.log(err)
         }
     }
 
+    const deleteLike = async (elem) => {
+        // console.log('elem: ', elem);
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+            try {
+                await axios.delete(`${getHostUrl()}/store/bookmark`, {
+                    data: { _id: elem._id }
+                })
+                const newList = await axios.get(`${getHostUrl()}/store/bookmark`)
+                setList(newList.data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    }
+
+
 
     const storeList = css`
-    max-height: 440px;
-    margin-top: 15px;
-    padding: 5px 5px 0 5px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-height: 500px;
+    /* margin-top: 15px; */
+    padding: 0 5px 0 5px;
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
     border-left: none;
     border-right: none;
-    overflow-y: auto;
+    overflow:scroll;
     `
-
     const listItem = css`
     width: 100%;
     margin-bottom: 5px;
@@ -70,7 +82,8 @@ function Bookmark() {
     cursor: pointer;
     `
     const title = css`
-        margin-top: 10px;
+        min-width: 100px;
+        margin-bottom: 10px;
         font-size: 1.5rem;
         font-family: 'Noto Sans KR', sans-serif;
         span{
@@ -82,6 +95,27 @@ function Bookmark() {
         height: 150px;
         overflow: hidden;
     `
+    const info = css`
+    position: relative;
+    width: 100%;
+    margin-left: 10px;
+    p{
+        margin-top: 2px;
+        font-size: 13px;
+    }
+    h5{
+        max-width: 190px;
+        margin-bottom: 5px;
+        font-weight: bold;
+        word-break: keep-all;
+    }
+    `
+    const likeBtn = css`
+        position: absolute;
+        right: 0; 
+        top: 0;
+    `
+
 
     return (
         <>
@@ -91,14 +125,18 @@ function Bookmark() {
             </h2>
             <ul css={storeList}>
                 {
-                    list.map((store, index) => (
+                    list.map((store) => (
                         <Flex css={listItem} key={store._id}>
                             <div css={imgbox}>
                                 <img src={store.place_image} alt="unsplash random" width="100%" />
                             </div>
-                            <div className="cont">
-                                <p>{store.place_name}</p>
-                                <div className="info">
+                            <div css={info}>
+                                <h5>{store.place_name}</h5>
+                                <div css={likeBtn} onClick={() => deleteLike(store)}>
+                                    <FontAwesomeIcon icon={faHeart} style={{ color: "#f44336" }} />
+                                </div>
+
+                                <div>
                                     <p>{store.road_address_name}</p>
                                     <p>{store.phone}</p>
                                 </div>

@@ -1,17 +1,17 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil';
-import { keepId } from '../atom/user.atom';
+import { keepId, userAtom } from '../atom/user.atom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faBell } from '@fortawesome/free-solid-svg-icons'
 import { Button, HStack, VisuallyHidden, Flex, Grid } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom';
 
 function Nav() {
     const [chk, setChk] = useRecoilState(keepId)
-
+    const [user, setUser] = useRecoilState(userAtom)
     const histroy = useNavigate()
+
     const logOutUser = () => {
         const token = localStorage.getItem("토큰")
         // 체크해야 할 상태? email기억하기가 true일 경우엔 id랑 chk는 유지
@@ -20,14 +20,16 @@ function Nav() {
             // 하지만 토큰이 지워지면 유저정보도 다 지워지눈뎅
         }
         localStorage.clear()
+        setUser(null)
         histroy('/')
     }
 
     const navWrap = css`
         position: fixed;
         width: 100%;
+        min-width: 1100px;
+        padding: 0 30px;
         background-color: #F6F5F0;
-        /* border-bottom: 1px solid #ddd; */
         z-index: 999;
     `
     const btn = css`
@@ -44,7 +46,9 @@ function Nav() {
         <div css={navWrap}>
             <Flex justifyContent="space-between" p={3}>
                 <Grid w={150} css={imageBox}>
-                    <img src={process.env.PUBLIC_URL + `/marking_dog.png`} alt="" />
+                    <Link to="/main">
+                        <img src={process.env.PUBLIC_URL + `/marking_dog.png`} alt="" />
+                    </Link>
                 </Grid>
 
                 <HStack direction='row' spacing={4} align='center'>

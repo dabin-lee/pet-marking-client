@@ -14,8 +14,12 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { extendTheme } from '@chakra-ui/react'
 import Nav from './component/Nav';
 import User from './page/User.jsx'
+import { getHostUrl } from './util/http.util';
+
 
 const App = () => {
+
+  console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
   const [isInit, setIsInit] = useState(false)
   const [userState, setUserState] = useRecoilState(userAtom)
@@ -24,7 +28,7 @@ const App = () => {
     const fristToken = localStorage.getItem('토큰') //로컬스토리지 데이터 key에 '토큰'이있다면 값이 나와
     // console.log('fristToken: ', fristToken);
     if (fristToken) {
-      axios.post('http://localhost:3000/auth/comfirm-token', {
+      axios.post(`${getHostUrl()}/auth/comfirm-token`, {
         token: fristToken
       }).then(res => {
         console.log('res: ', res);
@@ -86,6 +90,16 @@ const App = () => {
 
 
 const Layout = () => {
+
+  const [user, setUser] = useRecoilState(userAtom)
+  const history = useNavigate()
+
+  useEffect(() => {
+    console.log(user)
+    if (!user) history('/')
+  }, [])
+
+
   return (
     <div>
       <Nav />

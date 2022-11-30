@@ -2,11 +2,24 @@ import axios from 'axios';
 
 
 const randomImg = axios.create({
-    baseURL: `https://api.unsplash.com/photos/random?client_id=KheA_Mb95Tz8yN9c1CYlyBIdaIZ0kI9hFQFHfFdVqis`,
+    baseURL: `https://api.unsplash.com/photos/random/?h=400`,
+    headers: {
+        Authorization: 'Client-ID ' + process.env.REACT_APP_UNSPLASH_API_KEY
+    },
     params: {
-        // client_id: process.env.REACT_APP_UNSPLASH_API_KEY,
         count: 30,
+        query: 'food, pet',
     }
 });
+
+export const randomImgFunc = (count) => {
+    return axios.create({
+        baseURL: `https://api.unsplash.com/photos/random/?h=400`,
+        headers: {
+            Authorization: 'Client-ID ' + process.env.REACT_APP_UNSPLASH_API_KEY
+        },
+        params: { count, query: 'food, pet' }
+    }).get()
+}
 
 export default randomImg

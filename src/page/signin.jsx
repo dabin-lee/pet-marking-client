@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useForm } from 'react-hook-form'
 import axios from 'axios';
+import { useForm } from 'react-hook-form'
 import { setInterceptor } from '../utill';
 import { useRecoilState } from 'recoil';
 import { userAtom, keepId } from '../atom/user.atom';
-import { useEffect } from 'react';
+import { getHostUrl } from '../util/http.util';
+
 const SigninPage = styled.div`
     display: flex;
     justify-content: center;
@@ -38,7 +39,11 @@ const SigninPage = styled.div`
         background: #fff;
         border-radius: 10px;
         box-shadow: 0 30px 60px 0 rgb(0 0 0 / 30%);
-        
+        h2{
+            img{
+                margin: 0 auto;
+            }
+        }
         form{
         display: flex;
         flex-direction: column;
@@ -113,7 +118,7 @@ function Signin() {
     const onValue = async (data) => {
         console.log(data.email.value)
         try {
-            const result = await axios.post('http://localhost:3000/auth/login', {
+            const result = await axios.post(`${getHostUrl()}/auth/login`, {
                 email: data.email,
                 pw: data.pw
             })

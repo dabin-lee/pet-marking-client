@@ -1,7 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
 import { css } from '@emotion/react'
-import axios from 'axios'
 
 // Swiper
 // import Swiper core and required modules
@@ -14,28 +12,18 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
+function StoreList({ placesList, itemOpenModal }) {
 
-function StoreList({ placesList, mustgo }) {
-
-    const [recommendList, setRecommendList] = useState([])
-    useEffect(() => {
-        recommendPlace()
-    }, [])
-
-    useEffect(() => {
-        console.log('recommendList: ', recommendList);
-    }, [recommendList])
-
-    const recommendPlace = async () => {
-        try {
-            const request = await axios.get("http://localhost:3000/store/mustgo")
-            setRecommendList(request.data)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-
+    const slideBox = css`
+    min-width: 1100px;
+    height: 380px;
+            padding: 0 30px 10px;
+            h2{
+                margin-bottom: 5px;
+                font-size: 1.5rem;
+                font-family: 'Noto Sans KR',sans-serif;
+            }
+    `
     const place = css`
         object-fit: contain;
         margin: 5px 5px 0 0;
@@ -55,34 +43,43 @@ function StoreList({ placesList, mustgo }) {
                 font-size: 13px;
             }
             h5{
+                margin-bottom: 5px;
+                color:lightsalmon;
+                font-weight: bold;
                 word-break: keep-all;
             }
         `
     const imgBox = css`
-        height: 120px;
+        height: 250px; 
+        object-fit: cover;
         overflow: hidden;
+        @media (max-width: 1400px) {
+            height: 155px;
+        }
         img{
             width: 100%;
+            height: 100%;
         }
     `
 
     return (
-        <div>
-            <h2>추천 맛집</h2>
+        <div css={slideBox}>
+            <h2>🐶 댕댕이와 함께하는 추천 장소</h2>
             <Swiper
                 modules={[Navigation, Pagination, Scrollbar, A11y]}
-                spaceBetween={30}
-                slidesPerView={4}
+                spaceBetween={5}
+                slidesPerView={5}
                 navigation={true}
                 pagination={{ clickable: true }}
+                autoplay={{ delay: 3000 }}
             >
                 <div>
                     {
-                        (mustgo ? placesList : recommendList).map(data =>
+                        placesList.map(data =>
                         (<SwiperSlide key={data._id ?? data.id}>
-                            <div css={place}>
+                            <div css={place} onClick={() => itemOpenModal(data)}>
                                 <div css={imgBox}>
-                                    <img src={data.place_image} alt="markimg" />
+                                    <img src={data.place_image} alt="marking" />
                                 </div>
                                 <div css={info}>
                                     <h5>{data.place_name}</h5>

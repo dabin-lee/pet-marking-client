@@ -9,6 +9,7 @@ function Header({ search, chgSearch, searchInput, searchPlace }) {
 
     const header = css`
     height: 110px;
+    min-width: 1100px;
     border-bottom: 1px solid #c8c8c8;
     `
     const search_Box = css`

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getHostUrl } from '../util/http.util';
 
 
 
@@ -104,7 +105,7 @@ export default function Signup() {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' })
     const pw = useRef()
     const onValue = (data) => {
-        axios.post('http://localhost:3000/auth/register', {
+        axios.post(`${getHostUrl()}/auth/register`, {
             email: data.email,
             pw: data.pw,
             pwComfirm: data.pwComfirm,
