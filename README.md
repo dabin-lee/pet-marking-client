@@ -6,8 +6,11 @@
 <img src="https://user-images.githubusercontent.com/57528886/204869838-6edb1187-c3a5-44e5-b04a-d09200ad0974.png" width="407"/>
 </div>
 
+
 👇메인 화면
+<div>
 <img width="763" alt="signUp_page" src="https://user-images.githubusercontent.com/57528886/204869407-9e82fa36-2545-41da-8928-cf62d0bf8df4.png">
+</div>
 
 ## ☕ Description✨
 강아지가 흔히 자신의 영역을 표시하는 용어를 '마킹'을 한다고 하죠.
