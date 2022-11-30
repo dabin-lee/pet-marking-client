@@ -1,9 +1,8 @@
 
 # 🐾 PETMAKING✨
-![로그인](./image/login_page.png)
-![회원가입](./image/signUp_page.png)
-![메인](./image/main_page.png)
-
+<img width="544" alt="login_page" src="https://user-images.githubusercontent.com/57528886/204869710-d7d737dd-680c-4c7c-a254-1204184699bc.png">
+<img width="590" alt="signUp_page" src="https://user-images.githubusercontent.com/57528886/204869838-6edb1187-c3a5-44e5-b04a-d09200ad0974.png">
+![main_page](https://user-images.githubusercontent.com/57528886/204869407-9e82fa36-2545-41da-8928-cf62d0bf8df4.png)
 
 ## ☕ Description✨
 강아지가 흔히 자신의 영역을 표시하는 용어를 '마킹'을 한다고 하죠.
@@ -16,7 +15,6 @@
 로그아웃 후에도 내가 북마크한 장소를 손쉽게 찾을 수 있습니다. 
 
 ## 📝 사용기술 및 언어✨
----
 - [FrontEnd]
   - Javascript
   - React
@@ -37,12 +35,10 @@
 
 
 ## ⏰ 개발 기간✨
----
 2022.10.01 - 2022.12.01
 
 
 ## 🎄 페이지 구성✨
----
   > header
     >> nav
   > main
@@ -56,14 +52,12 @@
 
 
 ## 구현 기능✨
----
 1. 로그인/ 로그아웃
 2. 회원가입
 3. 장소 검색
 4. 장소 북마크
 
 ## 세부 기능 명세✨
----
 ### 🗣️ client
 1. 로그인/ 로그아웃 / 회원가입
 - 사용자 세션유지를 위해 로컬스토리 액세스토큰 저장
